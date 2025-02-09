@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2566">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Albers Color Interaction&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f4f4f4;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>touch-action: none;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 90vw;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 90vw;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-width: 300px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>max-height: 300px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.square {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>transition: background-color 0.1s ease;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.square:nth-child(1) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.square:nth-child(2) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 75%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 75%;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.square:nth-child(3) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 50%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 50%;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>.square:nth-child(4) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 25%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>height: 25%;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const palettes = [</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#d13525', '#e48d5c', '#285943', '#0d0d0d'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#6a9f5a', '#3e665f', '#16262e', '#090909'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#c88d94', '#efb25b', '#e87722', '#aa2b1d'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#568f8b', '#2f5d62', '#1b3a4b', '#0b1a2d'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#a44334', '#d87954', '#fc9a63', '#ffcb74'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#8b5c30', '#d9a066', '#ffe28a', '#ffd25e'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#63776b', '#2c4c40', '#152726', '#080f0f'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#aa8633', '#d4b54c', '#ffee77', '#ffdd33'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#345487', '#4b7aa5', '#7da1c4', '#cde2f2'],</p>
+<p class="p1"><span class="Apple-converted-space">            </span>['#e4a672', '#ffcb92', '#ffeb9f', '#fff3c2']</p>
+<p class="p1"><span class="Apple-converted-space">        </span>];</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function getRandomColor() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const randomPalette = palettes[Math.floor(Math.random() * palettes.length)];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>return randomPalette[Math.floor(Math.random() * randomPalette.length)];</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function applyPalette() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.square').forEach((sq, index) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>sq.dataset.originalColor = palettes[0][index];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>sq.style.backgroundColor = palettes[0][index];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>function changeSquareColor(event) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let target = event.target;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (target.classList.contains('square')) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>target.style.backgroundColor = getRandomColor();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><span class="Apple-converted-space">        </span></p>
+<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener("DOMContentLoaded", () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>applyPalette();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.square').forEach((sq) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>sq.addEventListener("click", changeSquareColor);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="square"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="square"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="square"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="square"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
