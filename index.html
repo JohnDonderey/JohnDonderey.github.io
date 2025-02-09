@@ -1,158 +1,142 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2566">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Albers Color Interaction</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            margin: 0;
+            touch-action: none;
+        }
+        .container {
+            position: relative;
+            width: 90vw;
+            height: 90vw;
+            max-width: 300px;
+            max-height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .square {
+            position: absolute;
+            transition: background-color 0.1s ease;
+        }
+        .square:nth-child(1) {
+            width: 100%;
+            height: 100%;
+        }
+        .square:nth-child(2) {
+            width: 75%;
+            height: 75%;
+        }
+        .square:nth-child(3) {
+            width: 50%;
+            height: 50%;
+        }
+        .square:nth-child(4) {
+            width: 25%;
+            height: 25%;
+        }
+    </style>
+    <script>
+        const palettes = [
+            ['#6C91BF', '#4D6FA1', '#2E4D83', '#182E54'],
+            ['#DAD3C6', '#BCA88E', '#8E6F57', '#5D473A'],
+            ['#A3D9FF', '#7EB2DD', '#5C89B4', '#3A5C80'],
+            ['#5C80BC', '#3F618C', '#2B3A67', '#1A1B41'],
+            ['#F4E8D5', '#E0C9A9', '#C59776', '#8C5B3F'],
+            ['#89B0AE', '#55828B', '#3B6064', '#1B1B1E'],
+            ['#E8DED4', '#C9A783', '#B17850', '#744F32'],
+            ['#B3CDE0', '#8AA4BF', '#61789E', '#405078'],
+            ['#F8E1B4', '#E7C283', '#C99B58', '#8F613D'],
+            ['#7EA8BE', '#5B8399', '#3A5C75', '#213748'],
+            ['#E0DED9', '#C2A98D', '#A37552', '#6B3B21'],
+            ['#CAD2C5', '#84A98C', '#52796F', '#354F52'],
+            ['#FFCB69', '#E5989B', '#B5838D', '#6D6875'],
+            ['#C9ADA7', '#9A8C98', '#4A4E69', '#22223B'],
+            ['#FFE8D6', '#E9C46A', '#F4A261', '#E76F51'],
+            ['#5D737E', '#3F5665', '#283B4C', '#17212B'],
+            ['#8EA8C3', '#6D87A3', '#4D6584', '#2D425E'],
+            ['#A7C5EB', '#85A5D4', '#6285BC', '#3D66A5'],
+            ['#F2CC8F', '#E07A5F', '#3D405B', '#81B29A'],
+            ['#FFDDD2', '#F08080', '#E63946', '#9D0208'],
+            ['#D8E2DC', '#B8C6A6', '#80997E', '#516A5A'],
+            ['#F8EDC5', '#FFD3B6', '#FFAAA5', '#FF8C94'],
+            ['#6D597A', '#B56576', '#E56B6F', '#EAAC8B'],
+            ['#B3CDE0', '#8AA4BF', '#61789E', '#405078'],
+            ['#7EA8BE', '#5B8399', '#3A5C75', '#213748']
+        ];
+        let currentPalette = 0;
+        let isDragging = false;
+        let lastTarget = null;
+        
+        function applyPalette() {
+            document.querySelectorAll('.square').forEach((sq, index) => {
+                sq.dataset.originalColor = palettes[currentPalette][index];
+                sq.style.backgroundColor = palettes[currentPalette][index];
+            });
+        }
+        
+        function changePalette() {
+            if (!isDragging) {
+                currentPalette = (currentPalette + 1) % palettes.length;
+                applyPalette();
+            }
+        }
+        
+        document.addEventListener("DOMContentLoaded", () => {
+            applyPalette();
+            document.querySelectorAll('.square').forEach((sq) => {
+                sq.addEventListener("pointerdown", () => {
+                    isDragging = true;
+                });
+                sq.addEventListener("pointerup", () => {
+                    isDragging = false;
+                    lastTarget = null;
+                });
+                sq.addEventListener("pointermove", (e) => {
+                    if (isDragging) {
+                        let target = document.elementFromPoint(e.clientX, e.clientY);
+                        if (target && target.classList.contains('square')) {
+                            if (lastTarget && lastTarget !== target) {
+                                lastTarget.style.backgroundColor = lastTarget.dataset.originalColor;
+                            }
+                            target.style.backgroundColor = lightenColor(target.dataset.originalColor, 20);
+                            lastTarget = target;
+                        }
+                    }
+                });
+                sq.addEventListener("pointerleave", (e) => {
+                    if (isDragging) {
+                        e.target.style.backgroundColor = e.target.dataset.originalColor;
+                    }
+                });
+            });
+        });
+        
+        function lightenColor(hex, percent) {
+            let num = parseInt(hex.slice(1), 16),
+                amt = Math.round(2.55 * percent),
+                r = (num >> 16) + amt,
+                g = (num >> 8 & 0x00FF) + amt,
+                b = (num & 0x0000FF) + amt;
+            return `rgb(${Math.min(255, r)}, ${Math.min(255, g)}, ${Math.min(255, b)})`;
+        }
+    </script>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="en"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;Albers Color Interaction&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 100vh;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f4f4f4;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>margin: 0;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>touch-action: none;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.container {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: relative;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 90vw;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 90vw;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-width: 300px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>max-height: 300px;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>display: flex;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>justify-content: center;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>align-items: center;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.square {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>position: absolute;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>transition: background-color 0.1s ease;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.square:nth-child(1) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 100%;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.square:nth-child(2) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 75%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 75%;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.square:nth-child(3) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 50%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 50%;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.square:nth-child(4) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>width: 25%;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>height: 25%;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const palettes = [</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#6C91BF', '#4D6FA1', '#2E4D83', '#182E54'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#DAD3C6', '#BCA88E', '#8E6F57', '#5D473A'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#A3D9FF', '#7EB2DD', '#5C89B4', '#3A5C80'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#5C80BC', '#3F618C', '#2B3A67', '#1A1B41'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#F4E8D5', '#E0C9A9', '#C59776', '#8C5B3F'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#89B0AE', '#55828B', '#3B6064', '#1B1B1E'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#E8DED4', '#C9A783', '#B17850', '#744F32'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#B3CDE0', '#8AA4BF', '#61789E', '#405078'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#F8E1B4', '#E7C283', '#C99B58', '#8F613D'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#7EA8BE', '#5B8399', '#3A5C75', '#213748'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#E0DED9', '#C2A98D', '#A37552', '#6B3B21'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#CAD2C5', '#84A98C', '#52796F', '#354F52'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#FFCB69', '#E5989B', '#B5838D', '#6D6875'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#C9ADA7', '#9A8C98', '#4A4E69', '#22223B'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#FFE8D6', '#E9C46A', '#F4A261', '#E76F51'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#5D737E', '#3F5665', '#283B4C', '#17212B'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#8EA8C3', '#6D87A3', '#4D6584', '#2D425E'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#A7C5EB', '#85A5D4', '#6285BC', '#3D66A5'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#F2CC8F', '#E07A5F', '#3D405B', '#81B29A'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#FFDDD2', '#F08080', '#E63946', '#9D0208'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#D8E2DC', '#B8C6A6', '#80997E', '#516A5A'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#F8EDC5', '#FFD3B6', '#FFAAA5', '#FF8C94'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#6D597A', '#B56576', '#E56B6F', '#EAAC8B'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#B3CDE0', '#8AA4BF', '#61789E', '#405078'],</p>
-<p class="p1"><span class="Apple-converted-space">            </span>['#7EA8BE', '#5B8399', '#3A5C75', '#213748']</p>
-<p class="p1"><span class="Apple-converted-space">        </span>];</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let currentPalette = 0;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let isDragging = false;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>let lastTarget = null;</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function applyPalette() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.square').forEach((sq, index) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sq.dataset.originalColor = palettes[currentPalette][index];</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sq.style.backgroundColor = palettes[currentPalette][index];</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function changePalette() {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (!isDragging) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>currentPalette = (currentPalette + 1) % palettes.length;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>applyPalette();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.addEventListener("DOMContentLoaded", () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>applyPalette();</p>
-<p class="p1"><span class="Apple-converted-space">            </span>document.querySelectorAll('.square').forEach((sq) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sq.addEventListener("pointerdown", () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>isDragging = true;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sq.addEventListener("pointerup", () =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>isDragging = false;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>lastTarget = null;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sq.addEventListener("pointermove", (e) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (isDragging) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>let target = document.elementFromPoint(e.clientX, e.clientY);</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>if (target &amp;&amp; target.classList.contains('square')) {</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>if (lastTarget &amp;&amp; lastTarget !== target) {</p>
-<p class="p1"><span class="Apple-converted-space">                                </span>lastTarget.style.backgroundColor = lastTarget.dataset.originalColor;</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>target.style.backgroundColor = lightenColor(target.dataset.originalColor, 20);</p>
-<p class="p1"><span class="Apple-converted-space">                            </span>lastTarget = target;</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">                </span>sq.addEventListener("pointerleave", (e) =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>if (isDragging) {</p>
-<p class="p1"><span class="Apple-converted-space">                        </span>e.target.style.backgroundColor = e.target.dataset.originalColor;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>}</p>
-<p class="p1"><span class="Apple-converted-space">                </span>});</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>function lightenColor(hex, percent) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>let num = parseInt(hex.slice(1), 16),</p>
-<p class="p1"><span class="Apple-converted-space">                </span>amt = Math.round(2.55 * percent),</p>
-<p class="p1"><span class="Apple-converted-space">                </span>r = (num &gt;&gt; 16) + amt,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>g = (num &gt;&gt; 8 &amp; 0x00FF) + amt,</p>
-<p class="p1"><span class="Apple-converted-space">                </span>b = (num &amp; 0x0000FF) + amt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>return `rgb(${Math.min(255, r)}, ${Math.min(255, g)}, ${Math.min(255, b)})`;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="container" onclick="changePalette()"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="square"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="square"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="square"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="square"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+    <div class="container" onclick="changePalette()">
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+    </div>
 </body>
-</html> 
+</html>
